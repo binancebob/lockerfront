@@ -124,13 +124,19 @@ function App() {
                
                 <s.TextDescription style={{ textAlign: "center" }}>
                 Your Locked Presidents Token ID's: 
+                <br /><br />
+                <StyledButton
+                      
+                    >
+                      UNSTAKE ALL
+                    </StyledButton>
                 </s.TextDescription>
                 {data.getTokensStaked}
                 <s.SpacerMedium />
                 <s.TextDescription style={{ textAlign: "center" }}>
                 Your Pending Rewards:
                 </s.TextDescription>
-                {data.getAllRewards} $uSTD 
+                {data.getAllRewards / 1000000000000000000} $uSTD 
                 <br />
                 <StyledButton
                       
@@ -141,7 +147,7 @@ function App() {
                 <s.TextDescription style={{ textAlign: "center" }}>
                 Your $uSDT In Your Wallet:
                 </s.TextDescription>
-                {data.balanceOf} $uSTD 
+                {data.balanceOf / 1000000000000000000} $uSTD 
               </>
               )}
             </s.TextTitle>
@@ -205,6 +211,19 @@ function App() {
                     >
                       {claimingNft ? "BUSY" : "APPROVE"}
                     </StyledButton>
+                    </s.Container>
+                    <s.Container ai={"center"} jc={"center"} fd={"row"}>
+
+                    <s.SpacerMedium />
+                <s.TextDescription style={{ textAlign: "center" }}>
+                Approve us to transfer your presidents
+                </s.TextDescription>
+
+                </s.Container>
+                <s.SpacerMedium />
+                    <s.Container ai={"center"} jc={"center"} fd={"row"}>
+                    <input type="text" id="name" name="name" required
+                    minlength="1" size="30" placeholder="1045, 8560, 5682"></input>
                     <StyledButton
                       disabled={claimingNft ? 1 : 0}
                       onClick={(e) => {
@@ -213,23 +232,14 @@ function App() {
                         getData();
                       }}
                     >
-                      {claimingNft ? "BUSY" : "LOCK ALL"}
+                      {claimingNft ? "BUSY" : "LOCK TOKEN IDS"}
                     </StyledButton>
-                    <StyledButton
-                      disabled={claimingNft ? 1 : 0}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        claimNFTs(1);
-                        getData();
-                      }}
-                    >
-                      {claimingNft ? "BUSY" : "RELEASE ALL"}
-                    </StyledButton>
+                    
                   </s.Container>
                   <s.SpacerMedium />
                   <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <s.TextDescription style={{ textAlign: "center" }}>
-                      ADVANCED USERS CAN STAKE BY ID ON ETHERSCAN DIRECTLY: 
+                      YOUR TOKEN ID's CAN BE FOUND ON OPENSEA: 
                       <a style={{color: "antiquewhite", paddingLeft: "5px"}}
                         target={"_blank"}
                         href={"https://etherscan.io/token/0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e"}
