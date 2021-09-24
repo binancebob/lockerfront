@@ -33,16 +33,11 @@ export const fetchData = (account) => {
         .getState()
         .blockchain.smartContract.methods.totalSupply()
         .call();
-      let cost = await store
-        .getState()
-        .blockchain.smartContract.methods.cost()
-        .call();
 
       dispatch(
         fetchDataSuccess({
           name,
           totalSupply,
-          cost,
         })
       );
     } catch (err) {

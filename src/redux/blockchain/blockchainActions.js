@@ -1,6 +1,7 @@
 // constants
 import Web3 from "web3";
-import SmartContract from "../../contracts/LunaLanders.json";
+import SmartContract from "../../contracts/uSTD.json";
+import SmartContract2 from "../../contracts/WeMintCash.json";
 // log
 import { fetchData } from "../data/dataActions";
 
@@ -45,18 +46,24 @@ export const connect = () => {
         const networkId = await ethereum.request({
           method: "net_version",
         });
-        const NetworkData = await SmartContract.networks[networkId];
-        // if (networkId == 1) {
-        if (NetworkData) {
+       // const NetworkData = await SmartContract.networks[networkId];
+        if (networkId == 4) {
+       // if (NetworkData) {
           const SmartContractObj = new web3.eth.Contract(
             SmartContract.abi,
-            NetworkData.address
-            // "0x6020371b0e8a2fc259a6b111d178bba9c966a4a4"
+            // NetworkData.address
+            "0x704BfCab10eEcEAF1e793A127Ba559f1ed17cB0c"
+          );
+          const SmartContractObj2 = new web3.eth.Contract(
+            SmartContract2.abi,
+            // NetworkData.address
+            "0xE6D2ad0AE40E2F40f1a47EF1aFC9DbE174a00034"
           );
           dispatch(
             connectSuccess({
               account: accounts[0],
               smartContract: SmartContractObj,
+              smartContract2: SmartContractObj2,
               web3: web3,
             })
           );

@@ -2,7 +2,8 @@ const initialState = {
   loading: false,
   name: "",
   totalSupply: 0,
-  cost: 0,
+
+
   error: false,
   errorMsg: "",
 };
@@ -20,7 +21,7 @@ const dataReducer = (state = initialState, action) => {
         loading: false,
         name: action.payload.name,
         totalSupply: action.payload.totalSupply,
-        cost: action.payload.cost,
+        getAllRewards: action.payload.getAllRewards,
       };
     case "CHECK_DATA_FAILED":
       return {

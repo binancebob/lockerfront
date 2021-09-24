@@ -1,0 +1,2516 @@
+{
+  "contractName": "WithLimitedSupply",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tokenCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "availableTokenCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"availableTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"1001.digital\",\"kind\":\"dev\",\"methods\":{\"availableTokenCount()\":{\"details\":\"Check whether tokens are still available\",\"returns\":{\"_0\":\"the available token count\"}},\"constructor\":{\"params\":{\"totalSupply_\":\"how many tokens this collection should hold\"}},\"tokenCount()\":{\"details\":\"Get the current token count\",\"returns\":{\"_0\":\"the created token count\"}},\"totalSupply()\":{\"details\":\"Get the max Supply\",\"returns\":{\"_0\":\"the maximum token count\"}}},\"stateVariables\":{\"_totalSupply\":{\"details\":\"The maximum count of tokens this token tracker will hold.\"}},\"title\":\"A token tracker that limits the token supply and increments token IDs on each new mint.\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Instanciate the contract\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"@1001-digital/erc721-extensions/contracts/WithLimitedSupply.sol\":\"WithLimitedSupply\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@1001-digital/erc721-extensions/contracts/WithLimitedSupply.sol\":{\"keccak256\":\"0x742b192187c96155a49a0a466b93f077e2d012b85dd956782ea51d69164c22ef\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d843c1d146a507f0d7284d368bf8f49bf3628bf4dd01d9cb7c1b0a4ca5caac06\",\"dweb:/ipfs/QmasZV8Mc87VwbBf1oQErVeoYHkDA463EprMYsop7rB1LT\"]},\"@openzeppelin/contracts/utils/Counters.sol\":{\"keccak256\":\"0x78450f4e3b722cce467b21e285f72ce5eaf361e9ba9dd2241a413926246773cd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f103065051300cd995fd4599ba91188d4071b92175b52f26110e02db091617c0\",\"dweb:/ipfs/QmSyDz67R2HCypDE8Pacn3voVwxw9x17NM66q47YgBnGqc\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nimport \"@openzeppelin/contracts/utils/Counters.sol\";\n\n/// @author 1001.digital\n/// @title A token tracker that limits the token supply and increments token IDs on each new mint.\nabstract contract WithLimitedSupply {\n    using Counters for Counters.Counter;\n\n    // Keeps track of how many we have minted\n    Counters.Counter private _tokenCount;\n\n    /// @dev The maximum count of tokens this token tracker will hold.\n    uint256 private _totalSupply;\n\n    /// Instanciate the contract\n    /// @param totalSupply_ how many tokens this collection should hold\n    constructor (uint256 totalSupply_) {\n        _totalSupply = totalSupply_;\n    }\n\n    /// @dev Get the max Supply\n    /// @return the maximum token count\n    function totalSupply() public view returns (uint256) {\n        return _totalSupply;\n    }\n\n    /// @dev Get the current token count\n    /// @return the created token count\n    function tokenCount() public view returns (uint256) {\n        return _tokenCount.current();\n    }\n\n    /// @dev Check whether tokens are still available\n    /// @return the available token count\n    function availableTokenCount() public view returns (uint256) {\n        return totalSupply() - tokenCount();\n    }\n\n    /// @dev Increment the token count and fetch the latest count\n    /// @return the next token id\n    function nextToken() internal virtual ensureAvailability returns (uint256) {\n        uint256 token = _tokenCount.current();\n\n        _tokenCount.increment();\n\n        return token;\n    }\n\n    /// @dev Check whether another token is still available\n    modifier ensureAvailability() {\n        require(availableTokenCount() > 0, \"No more tokens available\");\n        _;\n    }\n\n    /// @param amount Check whether number of tokens are still available\n    /// @dev Check whether tokens are still available\n    modifier ensureAvailabilityFor(uint256 amount) {\n        require(availableTokenCount() >= amount, \"Requested number of tokens not available\");\n        _;\n    }\n}\n",
+  "sourcePath": "@1001-digital/erc721-extensions/contracts/WithLimitedSupply.sol",
+  "ast": {
+    "absolutePath": "@1001-digital/erc721-extensions/contracts/WithLimitedSupply.sol",
+    "exportedSymbols": {
+      "Counters": [
+        4158
+      ],
+      "WithLimitedSupply": [
+        1942
+      ]
+    },
+    "id": 1943,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1835,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:4"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/utils/Counters.sol",
+        "file": "@openzeppelin/contracts/utils/Counters.sol",
+        "id": 1836,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 1943,
+        "sourceUnit": 4159,
+        "src": "57:52:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 1837,
+          "nodeType": "StructuredDocumentation",
+          "src": "111:124:4",
+          "text": "@author 1001.digital\n @title A token tracker that limits the token supply and increments token IDs on each new mint."
+        },
+        "fullyImplemented": true,
+        "id": 1942,
+        "linearizedBaseContracts": [
+          1942
+        ],
+        "name": "WithLimitedSupply",
+        "nameLocation": "253:17:4",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 1841,
+            "libraryName": {
+              "id": 1838,
+              "name": "Counters",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4158,
+              "src": "283:8:4"
+            },
+            "nodeType": "UsingForDirective",
+            "src": "277:36:4",
+            "typeName": {
+              "id": 1840,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 1839,
+                "name": "Counters.Counter",
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 4090,
+                "src": "296:16:4"
+              },
+              "referencedDeclaration": 4090,
+              "src": "296:16:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Counter_$4090_storage_ptr",
+                "typeString": "struct Counters.Counter"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 1844,
+            "mutability": "mutable",
+            "name": "_tokenCount",
+            "nameLocation": "390:11:4",
+            "nodeType": "VariableDeclaration",
+            "scope": 1942,
+            "src": "365:36:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Counter_$4090_storage",
+              "typeString": "struct Counters.Counter"
+            },
+            "typeName": {
+              "id": 1843,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 1842,
+                "name": "Counters.Counter",
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 4090,
+                "src": "365:16:4"
+              },
+              "referencedDeclaration": 4090,
+              "src": "365:16:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Counter_$4090_storage_ptr",
+                "typeString": "struct Counters.Counter"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "documentation": {
+              "id": 1845,
+              "nodeType": "StructuredDocumentation",
+              "src": "408:66:4",
+              "text": "@dev The maximum count of tokens this token tracker will hold."
+            },
+            "id": 1847,
+            "mutability": "mutable",
+            "name": "_totalSupply",
+            "nameLocation": "495:12:4",
+            "nodeType": "VariableDeclaration",
+            "scope": 1942,
+            "src": "479:28:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1846,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "479:7:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "body": {
+              "id": 1857,
+              "nodeType": "Block",
+              "src": "654:44:4",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 1855,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 1853,
+                      "name": "_totalSupply",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1847,
+                      "src": "664:12:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 1854,
+                      "name": "totalSupply_",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1850,
+                      "src": "679:12:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "664:27:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 1856,
+                  "nodeType": "ExpressionStatement",
+                  "src": "664:27:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1848,
+              "nodeType": "StructuredDocumentation",
+              "src": "514:100:4",
+              "text": "Instanciate the contract\n @param totalSupply_ how many tokens this collection should hold"
+            },
+            "id": 1858,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nameLocation": "-1:-1:-1",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1851,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1850,
+                  "mutability": "mutable",
+                  "name": "totalSupply_",
+                  "nameLocation": "640:12:4",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1858,
+                  "src": "632:20:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1849,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "632:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "631:22:4"
+            },
+            "returnParameters": {
+              "id": 1852,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "654:0:4"
+            },
+            "scope": 1942,
+            "src": "619:79:4",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1866,
+              "nodeType": "Block",
+              "src": "829:36:4",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 1864,
+                    "name": "_totalSupply",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1847,
+                    "src": "846:12:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1863,
+                  "id": 1865,
+                  "nodeType": "Return",
+                  "src": "839:19:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1859,
+              "nodeType": "StructuredDocumentation",
+              "src": "704:67:4",
+              "text": "@dev Get the max Supply\n @return the maximum token count"
+            },
+            "functionSelector": "18160ddd",
+            "id": 1867,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "totalSupply",
+            "nameLocation": "785:11:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1860,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "796:2:4"
+            },
+            "returnParameters": {
+              "id": 1863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1862,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1867,
+                  "src": "820:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1861,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "820:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "819:9:4"
+            },
+            "scope": 1942,
+            "src": "776:89:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1877,
+              "nodeType": "Block",
+              "src": "1004:45:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1873,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1021:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1874,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "current",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4102,
+                      "src": "1021:19:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Counter_$4090_storage_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer) view returns (uint256)"
+                      }
+                    },
+                    "id": 1875,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1021:21:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1872,
+                  "id": 1876,
+                  "nodeType": "Return",
+                  "src": "1014:28:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1868,
+              "nodeType": "StructuredDocumentation",
+              "src": "871:76:4",
+              "text": "@dev Get the current token count\n @return the created token count"
+            },
+            "functionSelector": "9f181b5e",
+            "id": 1878,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "tokenCount",
+            "nameLocation": "961:10:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1869,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "971:2:4"
+            },
+            "returnParameters": {
+              "id": 1872,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1871,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1878,
+                  "src": "995:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1870,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "995:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "994:9:4"
+            },
+            "scope": 1942,
+            "src": "952:97:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1890,
+              "nodeType": "Block",
+              "src": "1212:52:4",
+              "statements": [
+                {
+                  "expression": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 1888,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1884,
+                        "name": "totalSupply",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1867,
+                        "src": "1229:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1885,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1229:13:4",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1886,
+                        "name": "tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1878,
+                        "src": "1245:10:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1887,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1245:12:4",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1229:28:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1883,
+                  "id": 1889,
+                  "nodeType": "Return",
+                  "src": "1222:35:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1879,
+              "nodeType": "StructuredDocumentation",
+              "src": "1055:91:4",
+              "text": "@dev Check whether tokens are still available\n @return the available token count"
+            },
+            "functionSelector": "e14ca353",
+            "id": 1891,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "availableTokenCount",
+            "nameLocation": "1160:19:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1880,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1179:2:4"
+            },
+            "returnParameters": {
+              "id": 1883,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1882,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1891,
+                  "src": "1203:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1881,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1203:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1202:9:4"
+            },
+            "scope": 1942,
+            "src": "1151:113:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1912,
+              "nodeType": "Block",
+              "src": "1445:111:4",
+              "statements": [
+                {
+                  "assignments": [
+                    1900
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 1900,
+                      "mutability": "mutable",
+                      "name": "token",
+                      "nameLocation": "1463:5:4",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 1912,
+                      "src": "1455:13:4",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 1899,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1455:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 1904,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1901,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1471:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1902,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "current",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4102,
+                      "src": "1471:19:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Counter_$4090_storage_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer) view returns (uint256)"
+                      }
+                    },
+                    "id": 1903,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1471:21:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1455:37:4"
+                },
+                {
+                  "expression": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1905,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1503:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1907,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "increment",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4116,
+                      "src": "1503:21:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Counter_$4090_storage_ptr_$returns$__$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer)"
+                      }
+                    },
+                    "id": 1908,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1503:23:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1909,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1503:23:4"
+                },
+                {
+                  "expression": {
+                    "id": 1910,
+                    "name": "token",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1900,
+                    "src": "1544:5:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1898,
+                  "id": 1911,
+                  "nodeType": "Return",
+                  "src": "1537:12:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1892,
+              "nodeType": "StructuredDocumentation",
+              "src": "1270:95:4",
+              "text": "@dev Increment the token count and fetch the latest count\n @return the next token id"
+            },
+            "id": 1913,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "id": 1895,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 1894,
+                  "name": "ensureAvailability",
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 1926,
+                  "src": "1408:18:4"
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "1408:18:4"
+              }
+            ],
+            "name": "nextToken",
+            "nameLocation": "1379:9:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1893,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1388:2:4"
+            },
+            "returnParameters": {
+              "id": 1898,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1897,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1913,
+                  "src": "1436:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1896,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1436:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1435:9:4"
+            },
+            "scope": 1942,
+            "src": "1370:186:4",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1925,
+              "nodeType": "Block",
+              "src": "1652:90:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 1920,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 1917,
+                            "name": "availableTokenCount",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 1891,
+                            "src": "1670:19:4",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                              "typeString": "function () view returns (uint256)"
+                            }
+                          },
+                          "id": 1918,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1670:21:4",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": ">",
+                        "rightExpression": {
+                          "hexValue": "30",
+                          "id": 1919,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1694:1:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "1670:25:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "hexValue": "4e6f206d6f726520746f6b656e7320617661696c61626c65",
+                        "id": 1921,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1697:26:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_53d5dca266b12f83aff029e7bd7fd03444e2d6b53c0b22c1bc0f8fc3bcdf8457",
+                          "typeString": "literal_string \"No more tokens available\""
+                        },
+                        "value": "No more tokens available"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_53d5dca266b12f83aff029e7bd7fd03444e2d6b53c0b22c1bc0f8fc3bcdf8457",
+                          "typeString": "literal_string \"No more tokens available\""
+                        }
+                      ],
+                      "id": 1916,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "1662:7:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 1922,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1662:62:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1923,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1662:62:4"
+                },
+                {
+                  "id": 1924,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "1734:1:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1914,
+              "nodeType": "StructuredDocumentation",
+              "src": "1562:55:4",
+              "text": "@dev Check whether another token is still available"
+            },
+            "id": 1926,
+            "name": "ensureAvailability",
+            "nameLocation": "1631:18:4",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 1915,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1649:2:4"
+            },
+            "src": "1622:120:4",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1940,
+              "nodeType": "Block",
+              "src": "1922:112:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 1935,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 1932,
+                            "name": "availableTokenCount",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 1891,
+                            "src": "1940:19:4",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                              "typeString": "function () view returns (uint256)"
+                            }
+                          },
+                          "id": 1933,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1940:21:4",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": ">=",
+                        "rightExpression": {
+                          "id": 1934,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1929,
+                          "src": "1965:6:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1940:31:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "hexValue": "526571756573746564206e756d626572206f6620746f6b656e73206e6f7420617661696c61626c65",
+                        "id": 1936,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1973:42:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_3e4b27b0ab39d1ea55d60c4e7efe95b6836c556bfc7f765cbfdf09f7364fd849",
+                          "typeString": "literal_string \"Requested number of tokens not available\""
+                        },
+                        "value": "Requested number of tokens not available"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_3e4b27b0ab39d1ea55d60c4e7efe95b6836c556bfc7f765cbfdf09f7364fd849",
+                          "typeString": "literal_string \"Requested number of tokens not available\""
+                        }
+                      ],
+                      "id": 1931,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "1932:7:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 1937,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1932:84:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1938,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1932:84:4"
+                },
+                {
+                  "id": 1939,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "2026:1:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1927,
+              "nodeType": "StructuredDocumentation",
+              "src": "1748:122:4",
+              "text": "@param amount Check whether number of tokens are still available\n @dev Check whether tokens are still available"
+            },
+            "id": 1941,
+            "name": "ensureAvailabilityFor",
+            "nameLocation": "1884:21:4",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 1930,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1929,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "1914:6:4",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1941,
+                  "src": "1906:14:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1928,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1906:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1905:16:4"
+            },
+            "src": "1875:159:4",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1943,
+        "src": "235:1801:4",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:2005:4"
+  },
+  "legacyAST": {
+    "absolutePath": "@1001-digital/erc721-extensions/contracts/WithLimitedSupply.sol",
+    "exportedSymbols": {
+      "Counters": [
+        4158
+      ],
+      "WithLimitedSupply": [
+        1942
+      ]
+    },
+    "id": 1943,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1835,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:4"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/utils/Counters.sol",
+        "file": "@openzeppelin/contracts/utils/Counters.sol",
+        "id": 1836,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 1943,
+        "sourceUnit": 4159,
+        "src": "57:52:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 1837,
+          "nodeType": "StructuredDocumentation",
+          "src": "111:124:4",
+          "text": "@author 1001.digital\n @title A token tracker that limits the token supply and increments token IDs on each new mint."
+        },
+        "fullyImplemented": true,
+        "id": 1942,
+        "linearizedBaseContracts": [
+          1942
+        ],
+        "name": "WithLimitedSupply",
+        "nameLocation": "253:17:4",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 1841,
+            "libraryName": {
+              "id": 1838,
+              "name": "Counters",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4158,
+              "src": "283:8:4"
+            },
+            "nodeType": "UsingForDirective",
+            "src": "277:36:4",
+            "typeName": {
+              "id": 1840,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 1839,
+                "name": "Counters.Counter",
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 4090,
+                "src": "296:16:4"
+              },
+              "referencedDeclaration": 4090,
+              "src": "296:16:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Counter_$4090_storage_ptr",
+                "typeString": "struct Counters.Counter"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 1844,
+            "mutability": "mutable",
+            "name": "_tokenCount",
+            "nameLocation": "390:11:4",
+            "nodeType": "VariableDeclaration",
+            "scope": 1942,
+            "src": "365:36:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Counter_$4090_storage",
+              "typeString": "struct Counters.Counter"
+            },
+            "typeName": {
+              "id": 1843,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 1842,
+                "name": "Counters.Counter",
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 4090,
+                "src": "365:16:4"
+              },
+              "referencedDeclaration": 4090,
+              "src": "365:16:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Counter_$4090_storage_ptr",
+                "typeString": "struct Counters.Counter"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "documentation": {
+              "id": 1845,
+              "nodeType": "StructuredDocumentation",
+              "src": "408:66:4",
+              "text": "@dev The maximum count of tokens this token tracker will hold."
+            },
+            "id": 1847,
+            "mutability": "mutable",
+            "name": "_totalSupply",
+            "nameLocation": "495:12:4",
+            "nodeType": "VariableDeclaration",
+            "scope": 1942,
+            "src": "479:28:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1846,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "479:7:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "body": {
+              "id": 1857,
+              "nodeType": "Block",
+              "src": "654:44:4",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 1855,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 1853,
+                      "name": "_totalSupply",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1847,
+                      "src": "664:12:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 1854,
+                      "name": "totalSupply_",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1850,
+                      "src": "679:12:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "664:27:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 1856,
+                  "nodeType": "ExpressionStatement",
+                  "src": "664:27:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1848,
+              "nodeType": "StructuredDocumentation",
+              "src": "514:100:4",
+              "text": "Instanciate the contract\n @param totalSupply_ how many tokens this collection should hold"
+            },
+            "id": 1858,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nameLocation": "-1:-1:-1",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1851,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1850,
+                  "mutability": "mutable",
+                  "name": "totalSupply_",
+                  "nameLocation": "640:12:4",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1858,
+                  "src": "632:20:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1849,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "632:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "631:22:4"
+            },
+            "returnParameters": {
+              "id": 1852,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "654:0:4"
+            },
+            "scope": 1942,
+            "src": "619:79:4",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1866,
+              "nodeType": "Block",
+              "src": "829:36:4",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 1864,
+                    "name": "_totalSupply",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1847,
+                    "src": "846:12:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1863,
+                  "id": 1865,
+                  "nodeType": "Return",
+                  "src": "839:19:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1859,
+              "nodeType": "StructuredDocumentation",
+              "src": "704:67:4",
+              "text": "@dev Get the max Supply\n @return the maximum token count"
+            },
+            "functionSelector": "18160ddd",
+            "id": 1867,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "totalSupply",
+            "nameLocation": "785:11:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1860,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "796:2:4"
+            },
+            "returnParameters": {
+              "id": 1863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1862,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1867,
+                  "src": "820:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1861,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "820:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "819:9:4"
+            },
+            "scope": 1942,
+            "src": "776:89:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1877,
+              "nodeType": "Block",
+              "src": "1004:45:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1873,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1021:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1874,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "current",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4102,
+                      "src": "1021:19:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Counter_$4090_storage_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer) view returns (uint256)"
+                      }
+                    },
+                    "id": 1875,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1021:21:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1872,
+                  "id": 1876,
+                  "nodeType": "Return",
+                  "src": "1014:28:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1868,
+              "nodeType": "StructuredDocumentation",
+              "src": "871:76:4",
+              "text": "@dev Get the current token count\n @return the created token count"
+            },
+            "functionSelector": "9f181b5e",
+            "id": 1878,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "tokenCount",
+            "nameLocation": "961:10:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1869,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "971:2:4"
+            },
+            "returnParameters": {
+              "id": 1872,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1871,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1878,
+                  "src": "995:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1870,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "995:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "994:9:4"
+            },
+            "scope": 1942,
+            "src": "952:97:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1890,
+              "nodeType": "Block",
+              "src": "1212:52:4",
+              "statements": [
+                {
+                  "expression": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 1888,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1884,
+                        "name": "totalSupply",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1867,
+                        "src": "1229:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1885,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1229:13:4",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "-",
+                    "rightExpression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1886,
+                        "name": "tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1878,
+                        "src": "1245:10:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1887,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1245:12:4",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1229:28:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1883,
+                  "id": 1889,
+                  "nodeType": "Return",
+                  "src": "1222:35:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1879,
+              "nodeType": "StructuredDocumentation",
+              "src": "1055:91:4",
+              "text": "@dev Check whether tokens are still available\n @return the available token count"
+            },
+            "functionSelector": "e14ca353",
+            "id": 1891,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "availableTokenCount",
+            "nameLocation": "1160:19:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1880,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1179:2:4"
+            },
+            "returnParameters": {
+              "id": 1883,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1882,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1891,
+                  "src": "1203:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1881,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1203:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1202:9:4"
+            },
+            "scope": 1942,
+            "src": "1151:113:4",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1912,
+              "nodeType": "Block",
+              "src": "1445:111:4",
+              "statements": [
+                {
+                  "assignments": [
+                    1900
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 1900,
+                      "mutability": "mutable",
+                      "name": "token",
+                      "nameLocation": "1463:5:4",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 1912,
+                      "src": "1455:13:4",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 1899,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1455:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 1904,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1901,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1471:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1902,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "current",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4102,
+                      "src": "1471:19:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Counter_$4090_storage_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer) view returns (uint256)"
+                      }
+                    },
+                    "id": 1903,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1471:21:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1455:37:4"
+                },
+                {
+                  "expression": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 1905,
+                        "name": "_tokenCount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1844,
+                        "src": "1503:11:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Counter_$4090_storage",
+                          "typeString": "struct Counters.Counter storage ref"
+                        }
+                      },
+                      "id": 1907,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "increment",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4116,
+                      "src": "1503:21:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Counter_$4090_storage_ptr_$returns$__$bound_to$_t_struct$_Counter_$4090_storage_ptr_$",
+                        "typeString": "function (struct Counters.Counter storage pointer)"
+                      }
+                    },
+                    "id": 1908,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1503:23:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1909,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1503:23:4"
+                },
+                {
+                  "expression": {
+                    "id": 1910,
+                    "name": "token",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1900,
+                    "src": "1544:5:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1898,
+                  "id": 1911,
+                  "nodeType": "Return",
+                  "src": "1537:12:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1892,
+              "nodeType": "StructuredDocumentation",
+              "src": "1270:95:4",
+              "text": "@dev Increment the token count and fetch the latest count\n @return the next token id"
+            },
+            "id": 1913,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "id": 1895,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 1894,
+                  "name": "ensureAvailability",
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 1926,
+                  "src": "1408:18:4"
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "1408:18:4"
+              }
+            ],
+            "name": "nextToken",
+            "nameLocation": "1379:9:4",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1893,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1388:2:4"
+            },
+            "returnParameters": {
+              "id": 1898,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1897,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1913,
+                  "src": "1436:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1896,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1436:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1435:9:4"
+            },
+            "scope": 1942,
+            "src": "1370:186:4",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1925,
+              "nodeType": "Block",
+              "src": "1652:90:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 1920,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 1917,
+                            "name": "availableTokenCount",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 1891,
+                            "src": "1670:19:4",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                              "typeString": "function () view returns (uint256)"
+                            }
+                          },
+                          "id": 1918,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1670:21:4",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": ">",
+                        "rightExpression": {
+                          "hexValue": "30",
+                          "id": 1919,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1694:1:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "1670:25:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "hexValue": "4e6f206d6f726520746f6b656e7320617661696c61626c65",
+                        "id": 1921,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1697:26:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_53d5dca266b12f83aff029e7bd7fd03444e2d6b53c0b22c1bc0f8fc3bcdf8457",
+                          "typeString": "literal_string \"No more tokens available\""
+                        },
+                        "value": "No more tokens available"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_53d5dca266b12f83aff029e7bd7fd03444e2d6b53c0b22c1bc0f8fc3bcdf8457",
+                          "typeString": "literal_string \"No more tokens available\""
+                        }
+                      ],
+                      "id": 1916,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "1662:7:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 1922,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1662:62:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1923,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1662:62:4"
+                },
+                {
+                  "id": 1924,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "1734:1:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1914,
+              "nodeType": "StructuredDocumentation",
+              "src": "1562:55:4",
+              "text": "@dev Check whether another token is still available"
+            },
+            "id": 1926,
+            "name": "ensureAvailability",
+            "nameLocation": "1631:18:4",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 1915,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1649:2:4"
+            },
+            "src": "1622:120:4",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1940,
+              "nodeType": "Block",
+              "src": "1922:112:4",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 1935,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 1932,
+                            "name": "availableTokenCount",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 1891,
+                            "src": "1940:19:4",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                              "typeString": "function () view returns (uint256)"
+                            }
+                          },
+                          "id": 1933,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1940:21:4",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": ">=",
+                        "rightExpression": {
+                          "id": 1934,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1929,
+                          "src": "1965:6:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1940:31:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "hexValue": "526571756573746564206e756d626572206f6620746f6b656e73206e6f7420617661696c61626c65",
+                        "id": 1936,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1973:42:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_3e4b27b0ab39d1ea55d60c4e7efe95b6836c556bfc7f765cbfdf09f7364fd849",
+                          "typeString": "literal_string \"Requested number of tokens not available\""
+                        },
+                        "value": "Requested number of tokens not available"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_3e4b27b0ab39d1ea55d60c4e7efe95b6836c556bfc7f765cbfdf09f7364fd849",
+                          "typeString": "literal_string \"Requested number of tokens not available\""
+                        }
+                      ],
+                      "id": 1931,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "1932:7:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 1937,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1932:84:4",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 1938,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1932:84:4"
+                },
+                {
+                  "id": 1939,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "2026:1:4"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 1927,
+              "nodeType": "StructuredDocumentation",
+              "src": "1748:122:4",
+              "text": "@param amount Check whether number of tokens are still available\n @dev Check whether tokens are still available"
+            },
+            "id": 1941,
+            "name": "ensureAvailabilityFor",
+            "nameLocation": "1884:21:4",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 1930,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1929,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nameLocation": "1914:6:4",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1941,
+                  "src": "1906:14:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1928,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1906:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1905:16:4"
+            },
+            "src": "1875:159:4",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1943,
+        "src": "235:1801:4",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:2005:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.4+commit.c7e474f2.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.0",
+  "updatedAt": "2021-09-24T19:05:07.742Z",
+  "devdoc": {
+    "author": "1001.digital",
+    "kind": "dev",
+    "methods": {
+      "availableTokenCount()": {
+        "details": "Check whether tokens are still available",
+        "returns": {
+          "_0": "the available token count"
+        }
+      },
+      "constructor": {
+        "params": {
+          "totalSupply_": "how many tokens this collection should hold"
+        }
+      },
+      "tokenCount()": {
+        "details": "Get the current token count",
+        "returns": {
+          "_0": "the created token count"
+        }
+      },
+      "totalSupply()": {
+        "details": "Get the max Supply",
+        "returns": {
+          "_0": "the maximum token count"
+        }
+      }
+    },
+    "stateVariables": {
+      "_totalSupply": {
+        "details": "The maximum count of tokens this token tracker will hold."
+      }
+    },
+    "title": "A token tracker that limits the token supply and increments token IDs on each new mint.",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "Instanciate the contract"
+      }
+    },
+    "version": 1
+  }
+}

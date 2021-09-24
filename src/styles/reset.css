@@ -124,13 +124,13 @@ table {
 }
 
 @font-face {
-  font-family: 'LunaLand';
-  src: local('LunaLand'), url(../assets/fonts/lunaland.woff) format('woff');
+  font-family: 'CURRENCY';
+  src: local('CURRENCY'), url(../assets/fonts/CURRENCY.TTF) format('TTF');
 }
 
 body {
   margin: 0;
-  font-family: "LunaLand", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+  font-family: "Copperplate", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
