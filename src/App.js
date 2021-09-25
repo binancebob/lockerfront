@@ -62,12 +62,7 @@ function App() {
     setClaimingNft(true);
     blockchain.smartContract2.methods
       .setApprovalForAll(blockchain.account,true)
-      .send({
-        gasLimit: "28500000",
-        to: "0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e",
-        from: blockchain.account,
-        value: 0,
-      })
+      .send({from: blockchain.account})
       .once("error", (err) => {
         console.log(err);
         setFeedback("Sorry, something went wrong please try again later.");
@@ -75,7 +70,67 @@ function App() {
       })
       .then((receipt) => {
         setFeedback(
-          "You now own a Washington Mint! go visit Opensea.io to view it."
+          "Approved"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
+  const claimRewards = () => {
+    setFeedback("Claiming Tendies...");
+    setClaimingNft(true);
+    blockchain.smartContract.methods
+      .claimAll()
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Claimed"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
+  const unstake = () => {
+    setFeedback("Claiming Tendies...");
+    setClaimingNft(true);
+    blockchain.smartContract.methods
+      .unstakeAll()
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Claimed"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
+  const stake = (idArray) => {
+    setFeedback("Claiming Tendies...");
+    setClaimingNft(true);
+    blockchain.smartContract.methods
+      .stakeByIds(idArray)
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Claimed"
         );
         setClaimingNft(false);
         dispatch(fetchData(blockchain.account));
@@ -97,6 +152,14 @@ function App() {
   useEffect(() => {
     getData();
   }, [blockchain.account]);
+
+  
+
+  function getTextAndStake() {
+    let idslist = document.getElementById('textbox_id').value;
+    let idArray = [idslist];
+    stake(idArray);
+  }
 
   return (
     <s.Screen style={{ backgroundColor: "var(--black)" }}>
@@ -124,22 +187,33 @@ function App() {
                
                 <s.TextDescription style={{ textAlign: "center" }}>
                 Your Locked Presidents Token ID's: 
+                <br/>
+                {data.getTokensStaked}
                 <br /><br />
+                
                 <StyledButton
-                      
+                      onClick={(e) => {
+                        e.preventDefault();
+                        unstake();
+                        getData();
+                      }}
                     >
                       UNSTAKE ALL
                     </StyledButton>
                 </s.TextDescription>
-                {data.getTokensStaked}
+                
                 <s.SpacerMedium />
                 <s.TextDescription style={{ textAlign: "center" }}>
                 Your Pending Rewards:
                 </s.TextDescription>
                 {data.getAllRewards / 1000000000000000000} $uSTD 
                 <br />
-                <StyledButton
-                      
+                <StyledButton 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        claimRewards();
+                        getData();
+                      }}
                     >
                       CLAIM
                     </StyledButton>
@@ -222,17 +296,18 @@ function App() {
                 </s.Container>
                 <s.SpacerMedium />
                     <s.Container ai={"center"} jc={"center"} fd={"row"}>
-                    <input type="text" id="name" name="name" required
-                    minlength="1" size="30" placeholder="1045, 8560, 5682"></input>
+                    <input type="text" id="textbox_id" name="name" required
+                    minlength="1" size="10" placeholder="2053"></input>
                     <StyledButton
                       disabled={claimingNft ? 1 : 0}
                       onClick={(e) => {
                         e.preventDefault();
-                        claimNFTs(1);
+                        getTextAndStake()
+                        
                         getData();
                       }}
                     >
-                      {claimingNft ? "BUSY" : "LOCK TOKEN IDS"}
+                      {claimingNft ? "BUSY" : "LOCK TOKEN"}
                     </StyledButton>
                     
                   </s.Container>
