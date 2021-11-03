@@ -7,16 +7,25 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
-contract uSTD is ERC20Burnable, Ownable {
+contract WMC is ERC20Burnable, Ownable {
     /*
-    $uSTD backed by the presidents 
+ /$$      /$$ /$$      /$$  /$$$$$$ 
+| $$  /$ | $$| $$$    /$$$ /$$__  $$
+| $$ /$$$| $$| $$$$  /$$$$| $$  \__/
+| $$/$$ $$ $$| $$ $$/$$ $$| $$      
+| $$$$_  $$$$| $$  $$$| $$| $$      
+| $$$/ \  $$$| $$\  $ | $$| $$    $$
+| $$/   \  $$| $$ \/  | $$|  $$$$$$/
+|__/     \__/|__/     |__/ \______/ 
+                                                                           
+                                                 Minted by the Presidents
 */
 
     using SafeMath for uint256;
 
     uint256 public MAX_WALLET_STAKED = 100;
     uint256 public EMISSIONS_RATE = 11574070000000;
-    uint256 public CLAIM_END_TIME = 1672523999;
+    uint256 public CLAIM_END_TIME = 1648763999;
 
     address nullAddress = 0x0000000000000000000000000000000000000000;
 
@@ -36,8 +45,7 @@ contract uSTD is ERC20Burnable, Ownable {
     //Mapping of staker to president
     mapping(address => uint256[]) internal stakerToTokenIds;
 
-    constructor() ERC20("Unstables", "uSTD") {
-        _mint(msg.sender, (50000000 * 10**18));
+    constructor() ERC20("We Mint Cash", "WMC") {
     }
 
     function setWashieAddress(address _washieAddress) public onlyOwner {

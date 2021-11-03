@@ -53,15 +53,18 @@ function App() {
   const dispatch = useDispatch();
   const blockchain = useSelector((state) => state.blockchain);
   const data = useSelector((state) => state.data);
-  const [feedback, setFeedback] = useState("Ready to mint some $uSTD?");
+  const [feedback, setFeedback] = useState("Ready for stake? 🥩");
   const [claimingNft, setClaimingNft] = useState(false);
+  const [approvingWMC, setApprovingWMC] = useState(true);
+  const [approvingUSTD, setApprovingUSTD] = useState(true);
 
-  const claimNFTs = (_amount) => {
 
-    setFeedback("Minting...");
+
+  const approveNFTUSTD = (_amount) => {
+    setFeedback("Approving...Please wait while your tx is being processed");
     setClaimingNft(true);
     blockchain.smartContract2.methods
-      .setApprovalForAll(blockchain.account,true)
+      .setApprovalForAll("0xf6cf31c74d05A5879Df2ec7AB2ACcE687E6B09C6",true)
       .send({from: blockchain.account})
       .once("error", (err) => {
         console.log(err);
@@ -70,15 +73,36 @@ function App() {
       })
       .then((receipt) => {
         setFeedback(
-          "Approved"
+          "Approved, please stake your NFT by ID below"
         );
         setClaimingNft(false);
         dispatch(fetchData(blockchain.account));
       });
   };
 
+  const approveNFTWMC = (_amount) => {
+    setFeedback("Approving...Please wait while your tx is being processed");
+    setClaimingNft(true);
+    blockchain.smartContract2.methods
+      .setApprovalForAll("0x1920B60969Bc3087E2bDA3A4ca60BcAAD747b1a2",true) 
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Approved, please stake your NFT by ID below"
+        );
+        setClaimingNft(false);
+        setApprovingUSTD(true);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
   const claimRewards = () => {
-    setFeedback("Claiming Tendies...");
+    setFeedback("Claiming Tendies...Please wait while your tx is being processed");
     setClaimingNft(true);
     blockchain.smartContract.methods
       .claimAll()
@@ -90,15 +114,37 @@ function App() {
       })
       .then((receipt) => {
         setFeedback(
-          "Claimed"
+          "Claimed... Check your metamask wallet (make you you have added the custom token address)"
         );
         setClaimingNft(false);
         dispatch(fetchData(blockchain.account));
       });
+    
+  };
+
+  const claimWMCRewards = () => {
+    setFeedback("Claiming Tendies...Please wait while your tx is being processed");
+    setClaimingNft(true);
+    blockchain.smartContract3.methods
+      .claimAll()
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Claimed... Check your metamask wallet (make you you have added the custom token address"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+    
   };
 
   const unstake = () => {
-    setFeedback("Claiming Tendies...");
+    setFeedback("Unstaking...Please wait while your tx is being processed");
     setClaimingNft(true);
     blockchain.smartContract.methods
       .unstakeAll()
@@ -110,7 +156,27 @@ function App() {
       })
       .then((receipt) => {
         setFeedback(
-          "Claimed"
+          "Unstaked Success"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
+  const unstakeWMC = () => {
+    setFeedback("Unstaking...Please wait while your tx is being processed");
+    setClaimingNft(true);
+    blockchain.smartContract3.methods
+      .unstakeAll()
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Unstaked Success"
         );
         setClaimingNft(false);
         dispatch(fetchData(blockchain.account));
@@ -118,7 +184,7 @@ function App() {
   };
 
   const stake = (idArray) => {
-    setFeedback("Claiming Tendies...");
+    setFeedback("Staking...Please wait while your tx is being processed");
     setClaimingNft(true);
     blockchain.smartContract.methods
       .stakeByIds(idArray)
@@ -130,7 +196,27 @@ function App() {
       })
       .then((receipt) => {
         setFeedback(
-          "Claimed"
+          "Staked succesfully... Wait a few minutes then refresh the page to see your rewards"
+        );
+        setClaimingNft(false);
+        dispatch(fetchData(blockchain.account));
+      });
+  };
+
+  const stakeWMC = (idArray) => {
+    setFeedback("Staking...Please wait while your tx is being processed");
+    setClaimingNft(true);
+    blockchain.smartContract3.methods
+      .stakeByIds(idArray)
+      .send({from: blockchain.account})
+      .once("error", (err) => {
+        console.log(err);
+        setFeedback("Sorry, something went wrong please try again later.");
+        setClaimingNft(false);
+      })
+      .then((receipt) => {
+        setFeedback(
+          "Staked succesfully... Wait a few minutes then refresh the page to see your rewards"
         );
         setClaimingNft(false);
         dispatch(fetchData(blockchain.account));
@@ -153,13 +239,19 @@ function App() {
     getData();
   }, [blockchain.account]);
 
-  
-
   function getTextAndStake() {
     let idslist = document.getElementById('textbox_id').value;
     let idArray = [idslist];
     stake(idArray);
   }
+
+  function getTextAndStakeWMC() {
+    let idslist = document.getElementById('textbox_id').value;
+    let idArray = [idslist];
+    stakeWMC(idArray);
+  }
+
+
 
   return (
     <s.Screen style={{ backgroundColor: "var(--black)" }}>
@@ -167,66 +259,12 @@ function App() {
         <s.TextTitle
           style={{ textAlign: "center", fontSize: 28, fontWeight: "bold" }}
         >
-          Welcome To The Meta Reserve
+          🏦 Welcome To The Meta Reserve 🏦 
         </s.TextTitle>
         <s.SpacerMedium />
         <ResponsiveWrapper flex={1} style={{ padding: 24 }}>
-          <s.Container flex={1} jc={"center"} ai={"center"}>
           
-            <s.SpacerMedium />
-            <s.TextTitle
-              style={{ textAlign: "center", fontSize: 35, fontWeight: "bold" }}
-            >
-              {blockchain.account === "" ||
-                blockchain.smartContract === null ? (
-              <>
-              <StyledImg alt={"example"} src={`https://ipfs.io/ipfs/Qmdibwx2MmendzExWgsGsyiGodMJ8hvAkLHcAVbMbpK2rG/${rndInt}.png`} />
-              </>
-              ) : (
-              <>
-               
-                <s.TextDescription style={{ textAlign: "center" }}>
-                Your Locked Presidents Token ID's: 
-                <br/>
-                {data.getTokensStaked}
-                <br /><br />
-                
-                <StyledButton
-                      onClick={(e) => {
-                        e.preventDefault();
-                        unstake();
-                        getData();
-                      }}
-                    >
-                      UNSTAKE ALL
-                    </StyledButton>
-                </s.TextDescription>
-                
-                <s.SpacerMedium />
-                <s.TextDescription style={{ textAlign: "center" }}>
-                Your Pending Rewards:
-                </s.TextDescription>
-                {data.getAllRewards / 1000000000000000000} $uSTD 
-                <br />
-                <StyledButton 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        claimRewards();
-                        getData();
-                      }}
-                    >
-                      CLAIM
-                    </StyledButton>
-                <s.SpacerMedium />
-                <s.TextDescription style={{ textAlign: "center" }}>
-                Your $uSDT In Your Wallet:
-                </s.TextDescription>
-                {data.balanceOf / 1000000000000000000} $uSTD 
-              </>
-              )}
-            </s.TextTitle>
-          </s.Container>
-          <s.SpacerMedium />
+          
           <s.Container
             flex={1}
             jc={"center"}
@@ -236,11 +274,21 @@ function App() {
             
               <>
                 <s.TextTitle style={{ textAlign: "center" }}>
-                  The Meta Reserve Locker V.1
+                  The Meta Reserve Locker V.2 
+                  <StyledButton
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.open('https://medium.com/@wemintcash/wmc-minted-by-the-presidents-a-guide-eee7db9546d','_blank');
+                      }}
+                    >
+                      GUIDE 🧐
+                    </StyledButton>
+                  
+                  
                 </s.TextTitle>
                 <s.SpacerSmall />
                 <s.TextDescription style={{ textAlign: "center" }}>
-                  {feedback}
+                  <div style={{color:"red", fontSize: "20px"}}>{feedback}</div>
                 </s.TextDescription>
                 <s.SpacerMedium />
                 {blockchain.account === "" ||
@@ -271,35 +319,51 @@ function App() {
                 ) : (
                  <>
                  <s.TextTitle style={{ textAlign: "center" }}>
-                  Current $uSTD Supply: {data.totalSupply / 1000000000000000000} $uSTD
+                 
                 </s.TextTitle>
                 <s.SpacerSmall />
+                <s.TextDescription style={{ textAlign: "center" }}>
+                You must approve the staking contracts to get started.
+                </s.TextDescription>
                   <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <StyledButton
-                      disabled={claimingNft ? 1 : 0}
+                      disabled={data.isApprovedUSTD ? 1 : 0}
                       onClick={(e) => {
                         e.preventDefault();
-                        claimNFTs(1);
+                        approveNFTUSTD(1);
                         getData();
                       }}
                     >
-                      {claimingNft ? "BUSY" : "APPROVE"}
+                      {claimingNft ? "PLEASE WAIT" : "APPROVE uSTD CONTRACT"}
+                    </StyledButton>
+                    <StyledButton
+                      disabled={data.isApprovedWMC ? 1 : 0}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        approveNFTWMC(1);
+                        getData(); 
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "APPROVE WMC CONTRACT"}
                     </StyledButton>
                     </s.Container>
                     <s.Container ai={"center"} jc={"center"} fd={"row"}>
 
                     <s.SpacerMedium />
-                <s.TextDescription style={{ textAlign: "center" }}>
-                Approve us to transfer your presidents
-                </s.TextDescription>
+                
 
                 </s.Container>
-                <s.SpacerMedium />
+                <s.SpacerSmall />
+                <s.TextDescription style={{ textAlign: "center" }}>
+                Type in your Presidents Token ID and stake into either uSTD or WMC.
+                </s.TextDescription>
                     <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <input type="text" id="textbox_id" name="name" required
                     minlength="1" size="10" placeholder="2053"></input>
+                    </s.Container>
+                    <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <StyledButton
-                      disabled={claimingNft ? 1 : 0}
+                      disabled={data.isApprovedUSTD ? 0 : 1}
                       onClick={(e) => {
                         e.preventDefault();
                         getTextAndStake()
@@ -307,36 +371,158 @@ function App() {
                         getData();
                       }}
                     >
-                      {claimingNft ? "BUSY" : "LOCK TOKEN"}
+                      {claimingNft ? "PLEASE WAIT" : "STAKE INTO uSTD"}
+                    </StyledButton>
+                    
+                    <StyledButton
+                      disabled={data.isApprovedWMC ? 0 : 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        getTextAndStakeWMC()
+                        
+                        getData();
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "STAKE INTO WMC"}
                     </StyledButton>
                     
                   </s.Container>
+                  <s.TextDescription style={{ textAlign: "center" }}>
+                You will earn either 1 uSTD or 1 WMC per day.
+                </s.TextDescription>
                   <s.SpacerMedium />
                   <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <s.TextDescription style={{ textAlign: "center" }}>
                       YOUR TOKEN ID's CAN BE FOUND ON OPENSEA: 
                       <a style={{color: "antiquewhite", paddingLeft: "5px"}}
                         target={"_blank"}
-                        href={"https://etherscan.io/token/0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e"}
+                        href={"https://opensea.io/collection/wemint-washington"}
                       >
-                          0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e
+                          https://opensea.io/collection/wemint-washington
                       </a>
                     </s.TextDescription>
                   </s.Container>
+                 
                   <s.Container ai={"center"} jc={"center"} fd={"row"}>
                     <s.TextDescription style={{ textAlign: "center" }}>
-                      Follow us on Twitter to find out what comes next: 
+                      Advanced Users can interact directly with the contract on etherscan: 
+                      <br />
                       <a style={{color: "antiquewhite", paddingLeft: "5px"}}
                         target={"_blank"}
-                        href={"https://twitter.com/wemintcash"}
+                        href={"https://etherscan.io/address/0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e"}
                       >
-                          @WEMINTCASH
+                          WASHINGTON CONTRACT
+                      </a>
+                      <br />
+                      <a style={{color: "antiquewhite", paddingLeft: "5px"}}
+                        target={"_blank"}
+                        href={"https://etherscan.io/address/0xf6cf31c74d05A5879Df2ec7AB2ACcE687E6B09C6"}
+                      >
+                          uSTD CONTRACT
+                      </a>
+                      <br />
+                      <a style={{color: "antiquewhite", paddingLeft: "5px"}}
+                        target={"_blank"}
+                        href={"https://etherscan.io/address/0x1920B60969Bc3087E2bDA3A4ca60BcAAD747b1a2"}
+                      >
+                          WMC CONTRACT
                       </a>
                     </s.TextDescription>
                   </s.Container>
                 </>
                 )}
               </>
+          </s.Container>
+          <s.SpacerMedium />
+          <s.Container flex={1} jc={"center"} ai={"center"}>
+          
+            <s.SpacerMedium />
+            <s.TextTitle
+              style={{ textAlign: "center", fontSize: 35, fontWeight: "bold" }}
+            >
+              {blockchain.account === "" ||
+                blockchain.smartContract === null ? (
+              <>
+              <StyledImg alt={"example"} src={`https://ipfs.io/ipfs/Qmdibwx2MmendzExWgsGsyiGodMJ8hvAkLHcAVbMbpK2rG/${rndInt}.png`} />
+              </>
+              ) : (
+              <>
+                <div style={{background: "slategrey", padding: "16px",margin: "10px" , borderRadius: "5px"}}>
+                <s.TextDescription style={{ textAlign: "center" }}>
+                Your Pending Rewards $uSTD:
+                </s.TextDescription>
+                {data.getAllRewards / 1000000000000000000} $uSTD 
+                <br />
+                <s.TextDescription style={{ textAlign: "center" }}>
+                Washington ID: {data.getTokensStaked.toString()} Locked in uSTD Staker
+                <br /><br />
+                <StyledButton 
+                      disabled={data.isApprovedUSTD && data.getAllRewards > 0 ? 0 : 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        claimRewards();
+                        getData();
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "CLAIM uSTD REWARDS"}
+                  </StyledButton>
+                 
+                  <StyledButton
+                      disabled={data.isApprovedUSTD && data.getTokensStaked.length > 0 ? 0 : 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        unstake();
+                        getData();
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "UNSTAKE uSTD CONTRACT"}
+                  </StyledButton>
+                </s.TextDescription>
+                <s.SpacerMedium />
+                </div>
+                <div style={{background: "slategrey", padding: "16px",margin: "10px", borderRadius: "5px"}}>
+                <s.TextDescription style={{ textAlign: "center" }}>
+                Your Pending Rewards $WMC:
+                </s.TextDescription>
+                {(data.getAllRewardsWMC) / 1000000000000000000} $WMC 
+                <br />
+
+                <s.TextDescription style={{ textAlign: "center" }}>
+
+                Washington ID: {data.getTokensStakedWMC.toString()} Locked in WMC Staker
+            
+                </s.TextDescription>
+
+                
+                  <>
+                 
+                  
+                  <StyledButton 
+                      disabled={data.isApprovedWMC && data.getAllRewardsWMC > 0 ? 0 : 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        claimWMCRewards();
+                        getData();
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "CLAIM WMC REWARDS"}
+                  </StyledButton>
+                  <StyledButton
+                      disabled={data.isApprovedWMC && data.getTokensStakedWMC.length > 0 ? 0 : 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        unstakeWMC();
+                        getData();
+                      }}
+                    >
+                      {claimingNft ? "PLEASE WAIT" : "UNSTAKE WMC CONTRACT"}
+                  </StyledButton>
+                  
+                  </>
+                  </div>
+              </>
+              )}
+            </s.TextTitle>
           </s.Container>
         </ResponsiveWrapper>
         <s.SpacerSmall />
@@ -348,8 +534,7 @@ function App() {
           </s.TextDescription>
           <s.SpacerSmall />
           <s.TextDescription style={{ textAlign: "center", fontSize: 9 }}>
-            We have set the gas limit to 285000 for the contract to successfully
-            mint your NFT. We recommend that you don't change the gas limit.
+            Use this software at your own risk. 
           </s.TextDescription>
         </s.Container>
       </s.Container>

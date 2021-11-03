@@ -57,6 +57,11 @@ export const TextTitle = styled.p`
   line-height: 1.6;
 `;
 
+export const Button = styled.button`
+  margin: 10px;
+  width: inherit; 
+`;
+
 export const TextSubTitle = styled.p`
   color: var(--white);
   font-size: 14px;

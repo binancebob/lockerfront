@@ -4,7 +4,12 @@ const initialState = {
   totalSupply: 0,
   balanceOf: 0,
   getAllRewards: 0,
+  getAllRewardsWMC: 0,
+  balanceOfWMC: 0,
   getTokensStaked: [],
+  getTokensStakedWMC: [],
+  isApprovedUSTD: false,
+  isApprovedWMC: false,
   error: false,
   errorMsg: "",
 };
@@ -26,6 +31,11 @@ const dataReducer = (state = initialState, action) => {
         balanceOf: action.payload.balanceOf,
         getAllRewards: action.payload.getAllRewards,
         getTokensStaked: action.payload.getTokensStaked,
+        getTokensStakedWMC: action.payload.getTokensStakedWMC,
+        getAllRewardsWMC: action.payload.getAllRewardsWMC,
+        balanceOfWMC: action.payload.balanceOfWMC,
+        isApprovedUSTD: action.payload.isApprovedUSTD,
+        isApprovedWMC: action.payload.isApprovedWMC,
       };
     case "CHECK_DATA_FAILED":
       return {

@@ -2,7 +2,8 @@
 import Web3 from "web3";
 import SmartContract from "../../contracts/uSTD.json";
 import SmartContract2 from "../../contracts/WeMintCash.json";
-// log
+import SmartContract3 from "../../contracts/wmc.json";
+// logy
 import { fetchData } from "../data/dataActions";
 
 const connectRequest = () => {
@@ -47,23 +48,29 @@ export const connect = () => {
           method: "net_version",
         });
        // const NetworkData = await SmartContract.networks[networkId];
-        if (networkId == 4) {
+        if (networkId == 1) {
        // if (NetworkData) {
           const SmartContractObj = new web3.eth.Contract(
             SmartContract.abi,
             // NetworkData.address
-            "0x704BfCab10eEcEAF1e793A127Ba559f1ed17cB0c"
+            "0xf6cf31c74d05A5879Df2ec7AB2ACcE687E6B09C6" // uSTD
           );
           const SmartContractObj2 = new web3.eth.Contract(
             SmartContract2.abi,
             // NetworkData.address
-            "0xE6D2ad0AE40E2F40f1a47EF1aFC9DbE174a00034"
+            "0xA9cB55D05D3351dcD02dd5DC4614e764ce3E1D6e" // Washington
+          );
+          const SmartContractObj3 = new web3.eth.Contract(
+            SmartContract3.abi,
+            // NetworkData.address
+            "0x1920B60969Bc3087E2bDA3A4ca60BcAAD747b1a2" // WMC
           );
           dispatch(
             connectSuccess({
               account: accounts[0],
               smartContract: SmartContractObj,
               smartContract2: SmartContractObj2,
+              smartContract3: SmartContractObj3,
               web3: web3,
             })
           );
